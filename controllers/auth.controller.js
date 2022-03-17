@@ -13,6 +13,9 @@ const JWT_RESET_KEY = "furkangulsen_jwt_reset_key";
 const user = require("../models/user");
 
 // register handle
+// exports.register_handle = (req, res) => {
+//   const { name, email, password, password2 } = req.body;
+// };
 
 // activate account handle
 
