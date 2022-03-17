@@ -10,7 +10,9 @@ router.get("/login", (req, res) => {
 });
 
 // forgot password route
-router.get("/forgot", (req, res) => {});
+router.get("/forgot", (req, res) => {
+  res.render("forgot");
+});
 
 // reset password route
 router.get("/reset/:id", (req, res) => {
