@@ -37,7 +37,7 @@ router.post("/forgot", (req, res) => {});
 router.post("/reset/:id", (req, res) => {});
 
 // reset token handle
-router.get("/forgot/:token", (req, res) => {});
+router.get("/forgot/:token", authController.passwordReset);
 
 // login post handle
 router.post("/login", authController.login);

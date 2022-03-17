@@ -111,7 +111,7 @@ exports.register = (req, res) => {
 
 // activate account handle
 exports.activate = (req, res) => {
-  const token = req.params.token;
+  const { token } = req.params;
 
   if (!token) {
     req.flash("error_msg", "Account activation error! Please try again later.");
@@ -164,8 +164,37 @@ exports.activate = (req, res) => {
 };
 
 // forgot password handle
+exports.forgotPassword = (req, res) => {};
 
 // redirect to reset handle
+exports.passwordReset = (req, res) => {
+  const { token } = req.params;
+
+  if (!token) {
+    req.flash("error_msg", "Password reset error! Please try again later.");
+    return res.redirect("/auth/login");
+  }
+
+  jwt.verify(token, process.env.JWT_RESET_KEY, (err, decodedToken) => {
+    if (err) {
+      req.flash("error_msg", "Incorrect or expired link! Please try again.");
+      res.redirect("/auth/login");
+    } else {
+      const { _id } = decodedToken;
+      User.findById(_id, (err, user) => {
+        if (err) {
+          req.flash(
+            "error_msg",
+            "User with email doesn't exist! Please try again."
+          );
+          res.redirect("/auth/login");
+        } else {
+          res.redirect(`/auth/reset/${_id}`);
+        }
+      });
+    }
+  });
+};
 
 // login handle
 exports.login = (req, res, next) => {
