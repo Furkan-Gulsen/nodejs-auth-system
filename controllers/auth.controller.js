@@ -5,10 +5,6 @@ const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
 const jwt = require("jsonwebtoken");
 
-// GLOBAL (CONST) Variables
-const JWT_KEY = "furkangulsen_jwt_token";
-const JWT_RESET_KEY = "furkangulsen_jwt_reset_key";
-
 // user model
 const User = require("../models/user");
 
@@ -114,11 +110,75 @@ exports.register = (req, res) => {
 };
 
 // activate account handle
+exports.activate = (req, res) => {
+  const token = req.params.token;
+
+  if (!token) {
+    req.flash("error_msg", "Account activation error! Please try again later.");
+    return res.redirect("/auth/login");
+  }
+
+  jwt.verify(token, process.env.JWT_KEY, (err, decodedToken) => {
+    if (err) {
+      req.flash(
+        "error_msg",
+        "Incorrect or expired link! Please register again."
+      );
+      return res.redirect("/auth/register");
+    }
+
+    const { name, email, password } = decodedToken;
+    User.findOne({ email }).then((user) => {
+      if (user) {
+        // user already exists
+        req.flash("error_msg", "This email already registered! Please log in.");
+        return res.redirect("/auth/login");
+      }
+
+      // create new user
+      const newUser = new User({
+        name,
+        email,
+        password,
+      });
+      bcryptjs.genSalt(10, (err, salt) => {
+        bcryptjs.hash(newUser.password, salt, (err, hash) => {
+          if (err) throw err;
+          newUser.password = hash;
+          newUser
+            .save()
+            .then((user) => {
+              req.flash(
+                "success_msg",
+                "Account activated. Now, you can log in."
+              );
+              res.redirect("/auth/login");
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        });
+      });
+    });
+  });
+};
 
 // forgot password handle
 
 // redirect to reset handle
 
-// signin handle
+// login handle
+exports.login = (req, res, next) => {
+  passport.authenticate("local", {
+    successRedirect: "/dashboard",
+    failureRedirect: "/auth/login",
+    failureFlash: true,
+  })(req, res, next);
+};
 
-// signout handle
+// logout handle
+exports.logout = (req, res) => {
+  req.logout();
+  req.flash("success_msg", "You are logged out");
+  res.redirect("/auth/login");
+};

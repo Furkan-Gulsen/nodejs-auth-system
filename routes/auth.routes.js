@@ -6,7 +6,6 @@ const authController = require("../controllers/auth.controller");
 
 // login route
 router.get("/login", (req, res) => {
-  console.log("register is working: ", process.env.CLIENT_ID);
   res.render("login");
 });
 
@@ -26,12 +25,10 @@ router.get("/register", (req, res) => {
 });
 
 // register post handle
-router.post("/register", (req, res) => {
-  authController.register(req, res);
-});
+router.post("/register", authController.register);
 
 // email activate handle
-router.get("/activate/:token", (req, res) => {});
+router.get("/activate/:token", authController.activate);
 
 // forgot password handle
 router.post("/forgot", (req, res) => {});
@@ -43,9 +40,9 @@ router.post("/reset/:id", (req, res) => {});
 router.get("/forgot/:token", (req, res) => {});
 
 // login post handle
-router.post("/login", (req, res) => {});
+router.post("/login", authController.login);
 
 // logout get handle
-router.get("/logout", (req, res) => {});
+router.get("/logout", authController.logout);
 
 module.exports = router;
