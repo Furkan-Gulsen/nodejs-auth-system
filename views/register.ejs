@@ -1,9 +1,7 @@
 <div class="row mt-5">
   <div class="col-md-6 m-auto">
     <div class="card card-body text-center">
-      <h1 class="mb-3">
-        <!-- <img src="/assets/secure-icon.png" alt="icon" width="20%" /> -->
-      </h1>
+      <!-- Header -->
       <h3 class="mb-4 font-weight-bold">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -73,11 +71,14 @@
             value="<%= typeof password2 != 'undefined' ? password2 : '' %>"
           />
         </div>
+
         <!-- Register button -->
         <button type="submit" class="btn btn-primary btn-lg btn-block mt-4">
           Register
         </button>
       </form>
+
+      <!-- Additional  -->
       <p class="mt-1 opacity-50">
         Already have an account? <a href="/auth/login">Login</a>
       </p>

@@ -5,13 +5,17 @@ const router = express.Router();
 const authController = require("../controllers/auth.controller");
 
 // login route
-router.get("/login", (req, res) => {});
+router.get("/login", (req, res) => {
+  res.render("login");
+});
 
 // forgot password route
 router.get("/forgot", (req, res) => {});
 
 // reset password route
-router.get("/reset/:id", (req, res) => {});
+router.get("/reset/:id", (req, res) => {
+  res.render("reset", { id: req.params.id });
+});
 
 // register route
 router.get("/register", (req, res) => {

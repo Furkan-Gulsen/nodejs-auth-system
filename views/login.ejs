@@ -1,0 +1,61 @@
+<div class="row mt-5">
+  <div class="col-md-6 m-auto">
+    <div class="card card-body text-center">
+      <!-- Header -->
+      <h3 class="mb-4 font-weight-bold">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          fill="currentColor"
+          class="bi bi-unlock-fill mb-2"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z"
+          />
+        </svg>
+        Login
+      </h3>
+
+      <form action="/auth/login" method="POST">
+        <!-- Email Input -->
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-control"
+            placeholder="Enter Email"
+          />
+        </div>
+        <!-- Password Input -->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-control"
+            placeholder="Enter Password"
+          />
+        </div>
+        <!-- Login Button -->
+        <button type="submit" class="btn btn-primary btn-lg btn-block mt-4">
+          LOG IN
+        </button>
+      </form>
+
+      <!-- Additional  -->
+      <div class="row opacity-75 mt-2">
+        <div class="col-6 text-left">
+          <p>New User? <a href="/auth/register">Register</a></p>
+        </div>
+        <div class="col-6 text-right">
+          <p>Forgot Password? <a href="/auth/forgot">Reset</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
