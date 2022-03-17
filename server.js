@@ -20,7 +20,7 @@ mongoose
 
 // EJS Configuration
 app.use(expressLayouts);
-app.use("/assets", express.static("/assets"));
+app.use("/assets", express.static("./assets"));
 // set the view engine to ejs
 app.set("view engine", "ejs");
 
@@ -52,10 +52,7 @@ app.use(function (req, res, next) {
 });
 
 // Routes
-// app.use('/', require(''))
-app.get("/", (req, res, next) => {
-  res.send("hello node.js");
-});
+app.use("/", require("./routes/index"));
 
 const PORT = process.env.PORT | 3300;
 app.listen(PORT, console.log(`Server running on PORT ${PORT}`));
