@@ -94,14 +94,14 @@ exports.register = (req, res) => {
         console.log(error);
         req.flash(
           "error_msg",
-          "Something went wrong on our end. Please register again."
+          "Something went wrong on our end. Please register again"
         );
         res.redirect("/auth/login");
       } else {
         console.log("Mail sent : %s", info.response);
         req.flash(
           "success_msg",
-          "Activation link sent to email ID. Please activate to log in."
+          "Activation link sent to email ID. Please activate to log in"
         );
         res.redirect("/auth/login");
       }
@@ -114,7 +114,7 @@ exports.activate = (req, res) => {
   const { token } = req.params;
 
   if (!token) {
-    req.flash("error_msg", "Account activation error! Please try again later.");
+    req.flash("error_msg", "Account activation error! Please try again later");
     return res.redirect("/auth/login");
   }
 
@@ -131,7 +131,7 @@ exports.activate = (req, res) => {
     User.findOne({ email }).then((user) => {
       if (user) {
         // user already exists
-        req.flash("error_msg", "This email already registered! Please log in.");
+        req.flash("error_msg", "This email already registered! Please log in");
         return res.redirect("/auth/login");
       }
 
@@ -167,7 +167,7 @@ exports.activate = (req, res) => {
 exports.forgotPassword = (req, res) => {};
 
 // redirect to reset handle
-exports.passwordReset = (req, res) => {
+exports.gotoReset = (req, res) => {
   const { token } = req.params;
 
   if (!token) {
@@ -194,6 +194,54 @@ exports.passwordReset = (req, res) => {
       });
     }
   });
+};
+
+exports.resetPassword = (req, res) => {
+  var { password, password2 } = req.body;
+  const id = req.params.id;
+
+  // Checking input values
+  if (!password || !password2) {
+    req.flash("error_msg", "Please enter all inputs");
+    res.redirect(`/auth/reset/${id}`);
+  }
+
+  //   Checking password match
+  else if (password != password2) {
+    req.flash("error_msg", "Passwords do not match");
+    res.redirect(`/auth/reset/${id}`);
+  }
+
+  // Checking password length
+  else if (password.length < 8) {
+    req.flash("error_msg", "Password must be at least 8 characters");
+    res.redirect(`/auth/reset/${id}`);
+  }
+
+  // Update User
+  else {
+    bcryptjs.genSalt(10, (err, salt) => {
+      bcryptjs.hash(password, salt, (err, hash) => {
+        if (err) throw err;
+        User.findByIdAndUpdate(
+          { _id: id },
+          { password: password },
+          (err, result) => {
+            if (err) {
+              req.flash(
+                "error_msg",
+                "Error resetting password! Please try again later"
+              );
+              res.redirect(`/auth/reset/${id}`);
+            } else {
+              req.flash("success_msg", "Password reset successfully!");
+              res.redirect("/auth/login");
+            }
+          }
+        );
+      });
+    });
+  }
 };
 
 // login handle

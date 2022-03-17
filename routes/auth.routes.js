@@ -34,10 +34,10 @@ router.get("/activate/:token", authController.activate);
 router.post("/forgot", (req, res) => {});
 
 // reset password handle
-router.post("/reset/:id", (req, res) => {});
+router.post("/reset/:id", authController.resetPassword);
 
 // reset token handle
-router.get("/forgot/:token", authController.passwordReset);
+router.get("/forgot/:token", authController.gotoReset);
 
 // login post handle
 router.post("/login", authController.login);
