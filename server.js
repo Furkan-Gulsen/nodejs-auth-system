@@ -6,6 +6,9 @@ const passport = require("passport");
 const flash = require("connect-flash");
 const app = express();
 
+// loads environment variables from .env file
+require("dotenv").config();
+
 // passport configuration
 require("./config/passport")(passport);
 
