@@ -1,6 +1,6 @@
 # Nodejs Login System
 
-> You want a comprehensive user registration/login system I strongly suggest you take a look at this repo.
+> You want a comprehensive user sign-up/sign-in system I strongly suggest you take a look at this repo.
 
 ## The System Includes
 
