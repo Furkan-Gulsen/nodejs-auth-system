@@ -51,7 +51,7 @@
 
 ##### Clone the latest Repository
 
-`git clone https://github.com/Furkan-Gulsen/nodejs-login-system.git`
+`git clone https://github.com/Furkan-Gulsen/nodejs-auth-system.git`
 
 ##### Installing NPM dependencies
 
