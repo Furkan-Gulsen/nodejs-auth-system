@@ -6,7 +6,6 @@ const authController = require("../controllers/auth.controller");
 
 // login route
 router.get("/login", (req, res) => {
-  console.log(process.env.JWT_KEY);
   res.render("login");
 });
 
@@ -32,7 +31,7 @@ router.post("/register", authController.register);
 router.get("/activate/:token", authController.activate);
 
 // forgot password handle
-router.post("/forgot", (req, res) => {});
+router.post("/forgot", authController.forgotPassword);
 
 // reset password handle
 router.post("/reset/:id", authController.resetPassword);

@@ -1,16 +1,16 @@
 const passport = require("passport");
 const bcryptjs = require("bcryptjs");
-const nodemailer = require("nodemailer");
-const { google } = require("googleapis");
 const jwt = require("jsonwebtoken");
-const { activation_email } = require("../config/email-templates");
 
 // user model
 const User = require("../models/user");
+const {
+  send_account_verification_email,
+  send_forgot_password_email,
+} = require("./email.controller");
 
 // register handle
 exports.register = async (req, res) => {
-  console.log("register is working");
   const { name, email, password, password2 } = req.body;
   let errors = [];
 
@@ -51,46 +51,8 @@ exports.register = async (req, res) => {
       expiresIn: "30m",
     });
 
-    console.log("process.env.EMAIL: ", process.env.EMAIL);
-    console.log("process.env.EMAIL: ", typeof process.env.EMAIL);
-
-    console.log("process.env.PASSL: ", process.env.PASS);
-    console.log("process.env.PASS: ", typeof process.env.PASS);
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL, // your email address
-        pass: process.env.PASS, // your email password
-      },
-    });
-
-    const activation_code = `http://${req.headers.host}/auth/activate/${token}`;
-    const mailOptions = {
-      from: `"Auth Admin" <${process.env.EMAIL}>`,
-      to: email,
-      subject: "Account Verification: NodeJS Auth System",
-      generateTextFromHTML: true,
-      html: activation_email(activation_code),
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(error);
-        req.flash(
-          "error_msg",
-          "Something went wrong on our end. Please register again"
-        );
-        res.redirect("/auth/login");
-      } else {
-        console.log("Mail sent : %s", info.response);
-        req.flash(
-          "success_msg",
-          "Activation link sent to email ID. Please activate to log in"
-        );
-        res.redirect("/auth/login");
-      }
-    });
+    // send the verification email
+    send_account_verification_email(req, res, token, email);
   });
 };
 
@@ -176,6 +138,20 @@ exports.forgotPassword = (req, res) => {
         email,
       });
     }
+
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_RESET_KEY, {
+      expiresIn: "30m",
+    });
+    User.updateOne({ resetLink: token }, (err, success) => {
+      if (err) {
+        errors.push({ msg: "Error reseting password" });
+        return res.render("forgot", {
+          errors,
+          email,
+        });
+      }
+      send_forgot_password_email(req, res, token, email);
+    });
   });
 };
 
