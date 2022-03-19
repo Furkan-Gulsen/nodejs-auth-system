@@ -2,14 +2,13 @@ const passport = require("passport");
 const bcryptjs = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
-const OAuth2 = google.auth.OAuth2;
 const jwt = require("jsonwebtoken");
 
 // user model
 const User = require("../models/user");
 
 // register handle
-exports.register = (req, res) => {
+exports.register = async (req, res) => {
   console.log("register is working");
   const { name, email, password, password2 } = req.body;
   let errors = [];
@@ -37,7 +36,7 @@ exports.register = (req, res) => {
   }
 
   // validation passed
-  User.findOne({ email: email }).then((user) => {
+  await User.findOne({ email: email }).then(async (user) => {
     // user already exists
     if (user) {
       errors.push({ msg: "This email already registered" });
@@ -47,37 +46,21 @@ exports.register = (req, res) => {
       });
     }
 
-    // if the user is not registered in the system
-    const oauth2Client = new OAuth2(
-      process.env.CLIENT_ID,
-      process.env.CLIENT_SECRET,
-      "https://developers.google.com/oauthplayground"
-    );
-
-    oauth2Client.setCredentials({
-      refresh_token: process.env.REFRESH_TOKEN,
-    });
-    const accessToken = oauth2Client.getAccessToken();
-
-    const token = jwt.sign({ name, email, password }, JWT_KEY, {
-      expiresIn: "2h",
+    const token = jwt.sign({ name, email, password }, process.env.JWT_KEY, {
+      expiresIn: "30m",
     });
 
     const output = `
     <h2>Click on the link below to activate your account</h2>
-    <p style="font-weight:bold">http://${req.headers.host}/auth/activate/${token}</p>
-    <p style="opacity:.75">The link above will expire in 2 hours.</p>
+    <a style="font-weight:bold" href="http://${req.headers.host}/auth/activate/${token}"></a>
+    <p style="opacity:.75">The link above will expire in 30 minutes.</p>
     `;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        type: "OAuth2",
-        user: process.env.EMAIL,
-        clientId: process.env.CLIENT_ID,
-        clientSecret: process.env.CLIENT_SECRET,
-        refreshToken: process.env.REFRESH_TOKEN,
-        accessToken: accessToken,
+        user: process.env.EMAIL, // your email address
+        pass: process.env.PASS, // your email password
       },
     });
 
@@ -164,7 +147,35 @@ exports.activate = (req, res) => {
 };
 
 // forgot password handle
-exports.forgotPassword = (req, res) => {};
+exports.forgotPassword = (req, res) => {
+  const { email } = req.body;
+  let errors = [];
+
+  // Checking input values
+  if (!email) {
+    errors.push({ msg: "Please enter an email address" });
+  }
+
+  if (errors.length > 0) {
+    return res.render("forgot", {
+      errors,
+      email,
+    });
+  }
+
+  User.findOne({ email: email }).then((user) => {
+    // User already exists
+    if (!user) {
+      errors.push({
+        msg: "A user with this mail is not registered in our system",
+      });
+      return res.render("forgot", {
+        errors,
+        email,
+      });
+    }
+  });
+};
 
 // redirect to reset handle
 exports.gotoReset = (req, res) => {

@@ -6,6 +6,7 @@ const authController = require("../controllers/auth.controller");
 
 // login route
 router.get("/login", (req, res) => {
+  console.log(process.env.JWT_KEY);
   res.render("login");
 });
 
