@@ -214,7 +214,7 @@ exports.resetPassword = (req, res) => {
         if (err) throw err;
         User.findByIdAndUpdate(
           { _id: id },
-          { password: password },
+          { password: hash },
           (err, result) => {
             if (err) {
               req.flash(
