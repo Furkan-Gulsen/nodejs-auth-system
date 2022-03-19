@@ -1,16 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-// welcome route
+// welcome router
 router.get("/", (req, res) => {
   res.render("welcome");
 });
 
-// dashboard route
-router.get("/dashboard", (req, res) =>
-  res.render("dashboard", {
-    name: "Furkan Gulsen",
-  })
-);
+// dashboard router
+router.get('/dashboard', ensureAuthenticated, (req, res) => res.render('dashboard', {
+    name: req.user.name
+}));
 
 module.exports = router;
