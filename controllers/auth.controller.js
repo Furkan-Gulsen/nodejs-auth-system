@@ -3,6 +3,7 @@ const bcryptjs = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 const jwt = require("jsonwebtoken");
+const { activation_email } = require("../config/email-templates");
 
 // user model
 const User = require("../models/user");
@@ -50,11 +51,11 @@ exports.register = async (req, res) => {
       expiresIn: "30m",
     });
 
-    const output = `
-    <h2>Click on the link below to activate your account</h2>
-    <a style="font-weight:bold" href="http://${req.headers.host}/auth/activate/${token}"></a>
-    <p style="opacity:.75">The link above will expire in 30 minutes.</p>
-    `;
+    console.log("process.env.EMAIL: ", process.env.EMAIL);
+    console.log("process.env.EMAIL: ", typeof process.env.EMAIL);
+
+    console.log("process.env.PASSL: ", process.env.PASS);
+    console.log("process.env.PASS: ", typeof process.env.PASS);
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -64,12 +65,13 @@ exports.register = async (req, res) => {
       },
     });
 
+    const activation_code = `http://${req.headers.host}/auth/activate/${token}`;
     const mailOptions = {
       from: `"Auth Admin" <${process.env.EMAIL}>`,
       to: email,
       subject: "Account Verification: NodeJS Auth System",
       generateTextFromHTML: true,
-      html: output,
+      html: activation_email(activation_code),
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
