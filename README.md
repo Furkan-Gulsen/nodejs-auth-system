@@ -24,7 +24,7 @@
 
 #### Forgot password page
 
-![Welcome Page](assets/screenshot/login_page.png)
+![Welcome Page](assets/screenshot/forgot_password.png)
 
 #### Simple dashboard page :)
 
